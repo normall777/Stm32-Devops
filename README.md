@@ -8,4 +8,4 @@
 
 Мониторинг системы осуществляет сторонний сервер (8) с помощью платформы Prometheus, отображая данные в Grafana. 
 
-![Концепция системы](https://github.com/normall777/Stm32-Devops/edit/main/pic/conception.png)
+![Концепция системы](https://github.com/normall777/Stm32-Devops/blob/main/pic/conception.png)
