@@ -6,3 +6,4 @@
 ```
 docker-compose up
 ```
+О настройке node-exporter можно почитать [тут](https://linuxhit.com/prometheus-node-exporter-on-raspberry-pi-how-to-install/).
