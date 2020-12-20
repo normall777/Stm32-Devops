@@ -1,0 +1,113 @@
+stages:
+  - build environment
+  - build stm32 project
+  - flash and webcam stream
+  - cleanup
+
+motion-docker-build:
+  image: docker:latest
+  stage: build environment
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - export
+  script:
+    - docker pull "$CI_REGISTRY_IMAGE_MOTION"
+    - docker build --pull -t "$CI_REGISTRY_IMAGE_MOTION" motion/.
+    - docker push "$CI_REGISTRY_IMAGE_MOTION"
+  tags:
+    - docker
+  only:
+    - environment
+    - master
+    
+compiler-docker-build:
+  image: docker:latest
+  stage: build environment
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker pull "$CI_REGISTRY_IMAGE_COMPILER"
+    - docker build --pull -t "$CI_REGISTRY_IMAGE_COMPILER" compiler/.
+    - docker push "$CI_REGISTRY_IMAGE_COMPILER"
+  tags:
+    - docker
+  only:
+    - environment   
+    - master
+    
+st-link-docker-build:
+  image: docker:latest
+  stage: build environment
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker pull "$CI_REGISTRY_IMAGE_STLINK"
+    - docker build --pull -t "$CI_REGISTRY_IMAGE_STLINK" st-link/.
+    - docker push "$CI_REGISTRY_IMAGE_STLINK"
+  tags:
+    - docker
+  only:
+    - environment
+    - master
+    
+build-project:
+  stage: build stm32 project
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker container prune -f
+    - docker pull "$CI_REGISTRY_IMAGE_COMPILER"
+    - mkdir build
+    - docker-compose --file docker-compose-compile.yml up
+  artifacts:
+    paths:
+    - ./build
+    when: on_success
+    expire_in: 1h
+  tags:
+    - docker
+  only:
+    - develop
+    - master  
+  
+webcam-run:
+  stage: flash and webcam stream
+  dependencies:
+    - build-project
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker-compose --file docker-compose-stand.yml down
+    - docker pull "$CI_REGISTRY_IMAGE_MOTION"
+    - docker pull "$CI_REGISTRY_IMAGE_STLINK"
+    - docker-compose --file docker-compose-stand.yml up -d
+    - ifconfig wlan0 | awk '/inet / {print substr($2, 0)":8081"}'
+    - python3 ./standbot/standbot.py "$TG_KEY_API" "$TG_MY_ID" $(ifconfig wlan0 | awk '/inet / {print substr($2, 0)":8081"}')
+  after_script:
+    - docker-compose --file docker-compose-stand.yml down
+  tags:
+    - stand
+  only:
+    - develop
+    - master
+    
+cleanup:
+  stage: cleanup
+  when: always
+  script:
+    - echo "stand off"
+    - docker-compose --file docker-compose-stand.yml down
+    - docker container prune -f
+    - docker image prune -f
+    - rm -r *
+  tags:
+    - stand
+  only:
+    - develop
+    - master

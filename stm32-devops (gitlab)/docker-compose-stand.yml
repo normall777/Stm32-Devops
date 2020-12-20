@@ -1,0 +1,19 @@
+version: "3"
+services:
+  motion:
+    image: registry.gitlab.com/normall777/stm32-devops:motion
+    command: motion start -n
+    ports: 
+      - 8081:8081
+    volumes:
+      - ./motion/config/motion.conf:/etc/motion/motion.conf
+      - ./motion/config/motion:/etc/default/motion
+    devices:
+      - /dev/video0:/dev/video0
+    
+  st-link:
+    image: registry.gitlab.com/normall777/stm32-devops:st-link
+    volumes:
+      - ./build:/build
+    devices:
+      - /dev/bus/usb:/dev/bus/usb

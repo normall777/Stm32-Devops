@@ -1,0 +1,8 @@
+version: "3"
+services:
+  compile:
+    image: registry.gitlab.com/normall777/stm32-devops:compiler
+    command: /bin/bash -c "make && cd build && cp $$(cat ../target.txt) --target-directory=/build/ && cd .. && make clean"
+    volumes:
+      - ./project/:/stm32
+      - ./build/:/build
