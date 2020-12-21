@@ -34,7 +34,10 @@ docker push <registry url>:st-link
 
 Для запуска процедуры программирования проекте используется файл docker-compose-stand.yml, оторый находится в папке stm32-devops (gitlab), 
 совместно с docker-образом трансляции видео с веб-камеры motion.
-Предварительно в папку **stm32-devops (gitlab)/build** должны быть загружены собранные артефакты. Для запуска необходимо ввести:
+
+Предварительно в папку **stm32-devops (gitlab)/build** должны быть загружены собранные артефакты. 
+
+Для запуска необходимо ввести:
 ```
 docker-compose --file docker-compose-stand.yml up
 ```
