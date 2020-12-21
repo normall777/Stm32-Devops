@@ -24,5 +24,5 @@ docker push <registry url>:compiler
 Для сборки программы в данном проекте используется файл docker-compose-compile.yml, находящийся в папке **stm32-devops (gitlab)**.
 Предварительно рекомендуется создать папку **stm32-devops (gitlab)/build**. Для запуска необходимо ввести:
 ```
-docker-compose up
+docker-compose --file docker-compose-compile.yml up
 ```
