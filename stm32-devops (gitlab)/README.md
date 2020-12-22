@@ -20,3 +20,8 @@ Docker-контейнеры:
 - ./standbot - телеграмм-бот используется для отправки оповещения пользователю о том, что стенд запущен, с указанием IP-адреса стенда для доступа к видеотрансляции.
 
 ## Переменные Gitlab
+- $CI_REGISTRY_IMAGE_COMPILER - ссылка на образ компилятора формата <link to registry>:compiler
+- $CI_REGISTRY_IMAGE_MOTION - ссылка на образ с программой для трансляции видео <link to registry>:motion
+- $CI_REGISTRY_IMAGE_STLINK - ссылка на образ для работы программатора <link to registry>:st-link
+-	$TG_KEY_API - Bot token формата "111222333:ABCDDCBA..."
+- $TG_MY_ID - ID пользователя для отправки сообщения формата "123456789"
