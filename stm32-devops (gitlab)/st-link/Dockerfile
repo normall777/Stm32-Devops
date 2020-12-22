@@ -4,4 +4,3 @@ RUN apt-get update && apt-get install git build-essential cmake rpm libusb-1.0-0
 RUN git clone https://github.com/stlink-org/stlink.git && cd stlink && make clean && make release && cd build/Release && make install . && ldconfig
 
 WORKDIR /build
-CMD st-flash erase && st-flash --reset write *.bin 0x08000000

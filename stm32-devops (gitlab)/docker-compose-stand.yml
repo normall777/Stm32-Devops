@@ -1,7 +1,7 @@
 version: "3"
 services:
   motion:
-    image: registry.gitlab.com/normall777/stm32-devops:motion
+    image: ${CI_REGISTRY_IMAGE_MOTION}
     command: motion start -n
     ports: 
       - 8081:8081
@@ -12,8 +12,10 @@ services:
       - /dev/video0:/dev/video0
     
   st-link:
-    image: registry.gitlab.com/normall777/stm32-devops:st-link
+    image: ${CI_REGISTRY_IMAGE_STLINK}
+    command: /bin/bash -c "chmod +x flash.sh && ./flash.sh"
     volumes:
       - ./build:/build
+      - ./project/flash.sh:/build/flash.sh
     devices:
       - /dev/bus/usb:/dev/bus/usb
